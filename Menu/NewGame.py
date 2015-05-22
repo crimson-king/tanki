@@ -1,9 +1,9 @@
-__author__ = 'Pawel Kalecinski'
+__author__ = 'Tomasz Rzepka, Pawel Kalecinski'
 
 from GameMenu import GameMenu
 import pygame
 
-class NewGame(GameMenu):
+class NewGame:
     def __init__(self, screen, bg_color=(0, 0, 0)):
         self.screen = screen
         self.bg_color = bg_color

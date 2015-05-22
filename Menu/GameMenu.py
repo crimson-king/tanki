@@ -4,11 +4,11 @@ from MenuItem import *
 
 class GameMenu:
     def __init__(self, screen, items, funcs, font='Assets/armalite.ttf', font_size=100,
-                 font_color=RED):
+                 font_color=RED, img='Assets/tanks.jpg'):
         self.screen = screen
         self.scr_width = self.screen.get_rect().width
         self.scr_height = self.screen.get_rect().height
-        self.img = pygame.image.load('Assets/tanks.jpg')
+        self.img = pygame.image.load(img)
         self.clock = pygame.time.Clock()
         self.funcs = funcs
         self.items = []
