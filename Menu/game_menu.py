@@ -1,6 +1,7 @@
 __author__ = 'Pawel Kalecinski'
 
 from menu_item import *
+import sys
 
 class GameMenu:
     def __init__(self, screen, funcs, font='Assets/armalite.ttf', font_size=100,
@@ -77,7 +78,7 @@ class GameMenu:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    mainloop = False
+                    sys.exit()
                 if event.type == pygame.KEYDOWN:
                     self.mouse_is_visible = False
                     self.item_selection(event.key)

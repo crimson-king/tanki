@@ -1,6 +1,7 @@
 __author__ = 'Tomasz Rzepka'
 
-import pygame, sys
+import pygame
+import sys
 
 class Game:
     def __init__(self, manager, width=860, height=600):
