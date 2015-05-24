@@ -1,5 +1,5 @@
 __author__ = 'Tomasz Rzepka'
 
-from Credits import Credits
-from NewGame import NewGame
-from GameMenu import GameMenu
+from credits import Credits
+from new_game import NewGame
+from game_menu import GameMenu

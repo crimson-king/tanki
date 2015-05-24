@@ -1,6 +1,6 @@
 __author__ = 'Pawel Kalecinski'
 
-from MenuItem import *
+from menu_item import *
 
 class Credits:
     def __init__(self, screen, bg_color=(0, 0, 0)):

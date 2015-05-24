@@ -6,8 +6,8 @@ from pygame.sprite import Sprite
 class Tank(Sprite):
     def __init__(self):
         Sprite.__init__()
-        self.sprite = pygame.Surface((50, 50))
-        self.image.fill((255, 255, 0), 10)
+        #self.sprite = pygame.Surface((50, 50))
+        self.image = pygame.image.load('Assets/tank1')
         self.rect = self.image.get_rect()
 
 

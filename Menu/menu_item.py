@@ -21,6 +21,7 @@ class MenuItem(pygame.font.Font):
         self.position_y = position_y
         self.position = position_x, position_y
         self.is_selected = False
+        self.func = None
 
     def set_position(self, x_1, y_1):
         self.position = (x_1, y_1)

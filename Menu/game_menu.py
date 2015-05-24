@@ -1,9 +1,9 @@
 __author__ = 'Pawel Kalecinski'
 
-from MenuItem import *
+from menu_item import *
 
 class GameMenu:
-    def __init__(self, screen, items, funcs, font='Assets/armalite.ttf', font_size=100,
+    def __init__(self, screen, funcs, font='Assets/armalite.ttf', font_size=100,
                  font_color=RED, img='Assets/tanks.jpg'):
         self.screen = screen
         self.scr_width = self.screen.get_rect().width
@@ -13,13 +13,15 @@ class GameMenu:
         self.funcs = funcs
         self.items = []
 
-        for index, item in enumerate(items):
-            menu_item = MenuItem(item, font, font_size, font_color)
-            height_text = len(items) * menu_item.height
+        for index, item in enumerate(funcs):
+            (key, func) = item
+            menu_item = MenuItem(key, font, font_size, font_color)
+            height_text = len(self.funcs) * menu_item.height
             position_x = (self.scr_width / 2) - (menu_item.width / 2)
             position_y = (self.scr_height / 2) - (height_text / 2) + \
                          ((index * 2) + index * menu_item.height)
             menu_item.set_position(position_x, position_y)
+            menu_item.func = func
             self.items.append(menu_item)
 
         self.mouse_is_visible = True
@@ -56,8 +58,7 @@ class GameMenu:
         self.items[self.cur_item].set_color(ORANGE)
 
         if key == pygame.K_SPACE or key == pygame.K_RETURN:
-            text = self.items[self.cur_item].text
-            self.funcs[text]()
+            self.items[self.cur_item].func()
 
     @staticmethod
     def mouse_select(item, mouse_pos):
@@ -83,7 +84,7 @@ class GameMenu:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for item in self.items:
                         if item.mouse_selection(mouse_pos):
-                            self.funcs[item.text]()
+                            item.func()
 
             if pygame.mouse.get_rel() != (0, 0):
                 self.mouse_is_visible = True
