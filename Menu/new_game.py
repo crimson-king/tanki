@@ -3,16 +3,24 @@ __author__ = 'Tomasz Rzepka, Pawel Kalecinski'
 from game_menu import GameMenu
 import pygame
 from menu_item import RED, ORANGE, MenuItem
+from game_core import GameData
+from functools import partial
 
 class NewGame:
     def __init__(self, screen, bg_color=(0, 0, 0)):
         self.screen = screen
         self.bg_color = bg_color
         self.img = pygame.image.load("Assets/tanks2.jpg")
-        font='Assets/armalite.ttf'
-        font_size=50
-        font_color=RED
-        self.funcs = (("Player <1>", None), ("About", None), ("Settings", None), ("Back", self.stop))
+        font = 'Assets/armalite.ttf'
+        font_size = 50
+        font_color = RED
+        self.game_data = GameData()
+        player_strings = self.generate_players_strings()
+        self.funcs = ((player_strings[0], partial(self.change_player_state, 0)),
+                      (player_strings[1], partial(self.change_player_state, 1)),
+                      (player_strings[2], partial(self.change_player_state, 2)),
+                      (player_strings[3], partial(self.change_player_state, 3)),
+                      ("Back", self.stop))
         self.mainloop = False
         self.scr_width = self.screen.get_rect().width
         self.scr_height = self.screen.get_rect().height
@@ -34,8 +42,33 @@ class NewGame:
         self.mouse_is_visible = True
         self.cur_item = None
 
+    def generate_players_strings(self):
+        strings = []
+        for i, player in enumerate(self.game_data.players):
+            if player.isOn:
+                strings.append("Player %d  ON" % i)
+            else:
+                strings.append("Player %d  OFF" % i)
+        return strings
+
+    def generate_player_string(self, player_id):
+        if self.game_data.players[player_id].isOn:
+            return "Player %d  ON" % player_id
+        else:
+            return "Player %d  OFF" % player_id
+
+    def change_player_state(self, player_id):
+        if self.game_data.players[player_id].isOn:
+            if 0 <= self.game_data.players[player_id].tank.tank_id < 3:
+                self.game_data.players[player_id].tank.change_image(self.game_data.players[player_id].tank.tank_id+1)
+            else:
+                self.game_data.players[player_id].turn_off()
+        else:
+            self.game_data.players[player_id].turn_on()
+        self.items[player_id].text = self.generate_player_string(player_id)
+
     def stop(self):
-        self.mainloop=False
+        self.mainloop = False
 
     def mouse_visibility(self):
         if self.mouse_is_visible:
@@ -111,4 +144,11 @@ class NewGame:
                     self.mouse_select(item, mouse_pos)
                 self.screen.blit(item.label, item.position)
 
+            for i, player in enumerate(self.game_data.players):
+                if player.isOn:
+                    if i % 2:
+                        self.screen.blit(player.tank.image, (self.items[i].position_x+self.items[i].width,
+                                                             self.items[i].position_y-30))
+                    else:
+                        self.screen.blit(player.tank.image, (self.items[i].position_x-50, self.items[i].position_y-30))
             pygame.display.flip()
