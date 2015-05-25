@@ -47,24 +47,28 @@ class Tank(Sprite):
     def forward(self):
         (vec_x, vec_y) = self.vector
         (debt_x, debt_y) = self.position_debt
-        print "%f %f" % (vec_x, vec_y)
-        print "%f %f" % (vec_x+debt_x, vec_y+debt_y)
         (fractional_x, integral_x) = math.modf(vec_x+debt_x)
         (fractional_y, integral_y) = math.modf(vec_y+debt_y)
         self.rect.x -= integral_x
         self.rect.y += integral_y
         self.position_debt = (fractional_x, fractional_y)
-        print "%f %f" % (self.rect.x, self.rect.y)
 
     def backward(self):
         (vec_x, vec_y) = self.vector
-        self.rect.x += vec_x
-        self.rect.y -= vec_y
+        (debt_x, debt_y) = self.position_debt
+        (fractional_x, integral_x) = math.modf(vec_x+debt_x)
+        (fractional_y, integral_y) = math.modf(vec_y+debt_y)
+        self.rect.x += integral_x
+        self.rect.y -= integral_y
+        self.position_debt = (fractional_x, fractional_y)
 
 
 class Bullet(Sprite):
     def __init__(self):
         super(Bullet, self).__init__()
+        self.angle = 0
+        self.vector = (0.0, -1.0)
+        self.position_debt = (0.0, 0.0)
         self.sprite = pygame.Surface((10, 10))
         self.image = pygame.Surface((50, 50))
         self.image.fill((255, 0, 0))

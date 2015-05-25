@@ -8,7 +8,7 @@ class GameData:
         self.spawns = [(600, 100), (600, 700), (100, 400), (1100, 400),
                        (100, 100), (1100, 700), (100, 700), (1100, 100)]
         self.players = [Player(i) for i in xrange(4)]
-        self.walls = [Wall(i*2+1, 5) for i in xrange(10)]
+        self.walls = [Wall(i*2+100, 500) for i in xrange(10)]
         self.sprites = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
         self.tanks = pygame.sprite.Group()
