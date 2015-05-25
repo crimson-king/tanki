@@ -1,6 +1,7 @@
 __author__ = 'Pawel Kalecinski'
 
 from menu_item import *
+from configs import SCREEN_HEIGHT, SCREEN_WIDTH
 import sys
 
 class GameMenu:
@@ -9,7 +10,8 @@ class GameMenu:
         self.screen = screen
         self.scr_width = self.screen.get_rect().width
         self.scr_height = self.screen.get_rect().height
-        self.img = pygame.image.load(img)
+        self.bg_img = pygame.image.load(img)
+        self.bg_rect = self.bg_img.get_rect()
         self.clock = pygame.time.Clock()
         self.funcs = funcs
         self.items = []
@@ -92,7 +94,9 @@ class GameMenu:
                 self.cur_item = None
 
             self.mouse_visibility()
-            self.screen.blit(self.img, (0, 0))
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(self.bg_img, ((SCREEN_WIDTH - self.bg_rect.width) / 2,
+                                           (SCREEN_HEIGHT - self.bg_rect.height) / 2))
 
             for item in self.items:
                 if self.mouse_is_visible:

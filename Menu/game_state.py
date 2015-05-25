@@ -13,6 +13,8 @@ class Game:
         self.mainloop = False
 
     def stop(self):
+        self.screen.fill((0, 0, 0))
+        self.game_data.clear()
         self.mainloop = False
 
     def mouse_visibility(self):
@@ -30,9 +32,10 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-                if event.type == pygame.KEYDOWN:
-                    pass
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.stop()
 
             self.mouse_visibility()
-
+            self.game_data.sprites.draw(self.screen)
             pygame.display.flip()

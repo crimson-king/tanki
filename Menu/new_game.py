@@ -7,12 +7,14 @@ from menu_item import RED, ORANGE, MenuItem
 from game_core import GameData
 from functools import partial
 from game_state import Game
+from configs import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class NewGame:
     def __init__(self, screen, bg_color=(0, 0, 0)):
         self.screen = screen
         self.bg_color = bg_color
-        self.img = pygame.image.load("Assets/tanks2.jpg")
+        self.bg_img = pygame.image.load("Assets/tanks2.jpg")
+        self.bg_rect = self.bg_img.get_rect()
         font = 'Assets/armalite.ttf'
         font_size = 50
         self.font_color = RED
@@ -24,11 +26,11 @@ class NewGame:
                       (player_strings[1], partial(self.change_player_state, 1)),
                       (player_strings[2], partial(self.change_player_state, 2)),
                       (player_strings[3], partial(self.change_player_state, 3)),
+                      (self.generate_npc_tanks_string(), self.change_npc_tanks_number),
                       ("Back", self.stop))
         self.mainloop = False
         self.scr_width = self.screen.get_rect().width
         self.scr_height = self.screen.get_rect().height
-        self.mainloop = False
         self.items = []
         self.clock = pygame.time.Clock()
 
@@ -39,9 +41,9 @@ class NewGame:
             position_x = (self.scr_width / 2) - (menu_item.width / 2)
             position_y = 0
             if index == 0:
-                position_y -= 50
+                position_y -= 30
             if index == len(self.funcs) - 1:
-                position_y += 50
+                position_y += 30
             position_y += (self.scr_height / 2) - (height_text / 2) + \
                           ((index * 2) + index * menu_item.height)
             menu_item.set_position(position_x, position_y)
@@ -58,7 +60,9 @@ class NewGame:
                 tank_count += 1
         tank_count += self.npc_tanks_number
         if tank_count > 0:
-            screen = pygame.display.set_mode((800, 600), 0, 32)
+            self.game_data.add_npcs(self.npc_tanks_number)
+            self.game_data.initiate()
+            screen = pygame.display.set_mode((1200, 800), 0, 32)
             cr = Game(screen, self.game_data)
             cr.run()
 
@@ -77,6 +81,13 @@ class NewGame:
         else:
             return "Player %d  OFF" % player_id
 
+    def generate_npc_tanks_string(self):
+        return "NPC Tanks: %d" % self.npc_tanks_number
+
+    def change_npc_tanks_number(self):
+        self.npc_tanks_number = (self.npc_tanks_number + 1) % 5
+        self.items[5].text = self .generate_npc_tanks_string()
+
     def change_player_state(self, player_id):
         if self.game_data.players[player_id].isOn:
             if 0 <= self.game_data.players[player_id].tank.tank_id < 3:
@@ -88,6 +99,7 @@ class NewGame:
         self.items[player_id+1].text = self.generate_player_string(player_id)
 
     def stop(self):
+        self.screen.fill((0, 0, 0))
         self.mainloop = False
 
     def mouse_visibility(self):
@@ -117,7 +129,7 @@ class NewGame:
                     self.cur_item == len(self.items) - 1:
                 self.cur_item = 0
             elif key == pygame.K_ESCAPE:
-                self.mainloop = False
+                self.stop()
 
         self.items[self.cur_item].set_italic(True)
         self.items[self.cur_item].set_color(ORANGE)
@@ -156,7 +168,9 @@ class NewGame:
                 self.cur_item = None
 
             self.mouse_visibility()
-            self.screen.blit(self.img, (0, 0))
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(self.bg_img, ((SCREEN_WIDTH - self.bg_rect.width) / 2,
+                                           (SCREEN_HEIGHT - self.bg_rect.height) / 2))
 
             for item in self.items:
                 if self.mouse_is_visible:
@@ -165,6 +179,8 @@ class NewGame:
                 self.screen.blit(item.label, item.position)
 
             for i, player in enumerate(self.game_data.players):
+                if i > 4:
+                    break
                 if player.isOn:
                     if i % 2:
                         self.screen.blit(player.tank.image, (self.items[i+1].position_x+self.items[i+1].width,
