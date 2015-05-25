@@ -1,20 +1,66 @@
 __author__ = 'Tomasz Rzepka'
 import pygame
+import math
 from pygame.sprite import Sprite
 
 TANKS = ['Assets/tank1.png', 'Assets/tank2.png', 'Assets/tank3.png', 'Assets/tank4.png', 'Assets/enemyTank.png']
 
 class Tank(Sprite):
     def __init__(self, tank_id):
+        self.angle = 0
+        self.vector = (0.0, -1.0)
+        self.position_debt = (0.0, 0.0)
         super(Tank, self).__init__()
         self.tank_id = tank_id
         #self.sprite = pygame.Surface((50, 50))
-        self.image = pygame.image.load(TANKS[tank_id % 5])
+        self._image = pygame.image.load(TANKS[tank_id % 5])
+        self.image = self._image
         self.rect = self.image.get_rect()
 
     def change_image(self, tank_id):
         self.tank_id = tank_id % 4
-        self.image = pygame.image.load(TANKS[tank_id % 5])
+        self._image = pygame.image.load(TANKS[tank_id % 5])
+        self.image = self._image
+
+    def rotate(self, angle):
+        """rotate an image while keeping its center and size"""
+        self.angle += angle
+        self.rotate_vector()
+        orig_rect = self.image.get_rect()
+        rot_image = pygame.transform.rotate(self._image, self.angle)
+        rot_rect = self.rect.copy()
+        rot_rect.center = rot_image.get_rect().center
+        rot_image = rot_image.subsurface(rot_rect).copy()
+        self.image = rot_image
+
+    def rotate_vector(self):
+        """Rotate a vector `v` by the given angle, relative to the anchor point."""
+        x, y = (0.0, -1.0)
+        rad = math.radians(self.angle)
+        cos_theta = math.cos(rad)
+        sin_theta = math.sin(rad)
+
+        nx = x*cos_theta - y*sin_theta
+        ny = x*sin_theta + y*cos_theta
+        self.vector = (nx, ny)
+
+    def forward(self):
+        (vec_x, vec_y) = self.vector
+        (debt_x, debt_y) = self.position_debt
+        print "%f %f" % (vec_x, vec_y)
+        print "%f %f" % (vec_x+debt_x, vec_y+debt_y)
+        (fractional_x, integral_x) = math.modf(vec_x+debt_x)
+        (fractional_y, integral_y) = math.modf(vec_y+debt_y)
+        self.rect.x -= integral_x
+        self.rect.y += integral_y
+        self.position_debt = (fractional_x, fractional_y)
+        print "%f %f" % (self.rect.x, self.rect.y)
+
+    def backward(self):
+        (vec_x, vec_y) = self.vector
+        self.rect.x += vec_x
+        self.rect.y -= vec_y
+
 
 class Bullet(Sprite):
     def __init__(self):

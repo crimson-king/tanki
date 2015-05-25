@@ -3,6 +3,7 @@ __author__ = 'Tomasz Rzepka'
 import pygame
 import sys
 
+
 class Game:
     def __init__(self, screen, game_data, bg_color=(0, 0, 0)):
         self.screen = screen
@@ -26,6 +27,7 @@ class Game:
     def run(self):
         self.mainloop = True
         while self.mainloop:
+            self.screen.fill((0, 0, 0))
             self.clock.tick(100)
             mouse_pos = pygame.mouse.get_pos()
 
@@ -33,9 +35,22 @@ class Game:
                 if event.type == pygame.QUIT:
                     sys.exit()
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        self.stop()
+                    self.interpret_key(event.key)
 
             self.mouse_visibility()
             self.game_data.sprites.draw(self.screen)
             pygame.display.flip()
+
+    def interpret_key(self, key):  # hardcoded for debug purposes
+        if key == pygame.K_UP:
+            self.game_data.players[0].tank.forward()
+        elif key == pygame.K_DOWN:
+            self.game_data.players[0].tank.backward()
+        elif key == pygame.K_LEFT:
+            self.game_data.players[0].tank.rotate(+10)
+        elif key == pygame.K_RIGHT:
+            self.game_data.players[0].tank.rotate(-1)
+        elif key == pygame.K_SPACE:
+            pass
+        elif key == pygame.K_ESCAPE:
+            self.stop()
